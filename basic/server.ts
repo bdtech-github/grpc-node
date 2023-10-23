@@ -1,9 +1,9 @@
+// @ts-ignore
 import path from 'path'
 import * as grpc from '@grpc/grpc-js'
 import * as protoLoader from '@grpc/proto-loader'
 import {ProtoGrpcType} from './proto/employees'
 import {EmployeeService} from "./src/EmployeeService";
-import {IEmployeeServiceDefinition} from "./proto/employees/IEmployeeService";
 
 const PORT = 8082
 const PROTO_FILE = './proto/employees.proto'

@@ -27,6 +27,8 @@ export class EmployeeService implements EmployeeServiceHandlers {
     }
 
     Save(call: ServerUnaryCall<EmployeeRequest__Output, EmployeeResponse>, callback: sendUnaryData<EmployeeResponse>): void {
+        const employee = call.request.employee;
+        callback(null, { employee });
     }
 
     SaveAll(call: ServerDuplexStream<EmployeeRequest__Output, EmployeeResponse>): void {
