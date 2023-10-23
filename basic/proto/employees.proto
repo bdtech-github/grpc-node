@@ -35,7 +35,7 @@ message AddPhotoResponse {
   bool isOk = 1;
 }
 
-service EmployeeService {
+service IEmployeeService {
   rpc GetByBadgeNumber (GetByBadgeNumberRequest) returns (EmployeeResponse);
   rpc Save (EmployeeRequest) returns (EmployeeResponse);
   rpc GetAll (GetAllRequest) returns (stream EmployeeResponse);
