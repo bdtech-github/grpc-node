@@ -35,10 +35,14 @@ message AddPhotoResponse {
   bool isOk = 1;
 }
 
+/**
+* EmployeeService
+* Defines all the gRPC operations that the server should offer.
+*/
 service IEmployeeService {
   rpc GetByBadgeNumber (GetByBadgeNumberRequest) returns (EmployeeResponse);
   rpc Save (EmployeeRequest) returns (EmployeeResponse);
   rpc GetAll (GetAllRequest) returns (stream EmployeeResponse);
-  rpc SaveAll (stream EmployeeRequest) returns (stream EmployeeResponse);
   rpc AddPhoto (stream AddPhotoRequest) returns (AddPhotoResponse);
+  rpc SaveAll (stream EmployeeRequest) returns (stream EmployeeResponse);
 }

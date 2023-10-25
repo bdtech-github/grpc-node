@@ -27,7 +27,7 @@ function main() {
 
 function getServer() {
     const server = new grpc.Server()
-    server.addService(grpcObj.employees.IEmployeeService.service, new EmployeeService())
+    server.addService(grpcObj.employees.IEmployeeService.service, EmployeeService)
 
     return server
 }

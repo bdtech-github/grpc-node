@@ -25,7 +25,9 @@ client.waitForReady(deadline, (err) => {
     onClientReady()
 })
 
-function onClientReady() {
+
+
+const saveEmployee = () => {
     const employee: Employee = {
         firstName: 'Diego'
     }
@@ -36,4 +38,18 @@ function onClientReady() {
         }
         console.log(response);
     })
+}
+
+const getEmployeeByBadgeNumber = () => {
+    client.getByBadgeNumber({ badgeNumber: 2080}, (err, response)=> {
+        if(err) {
+            console.error(err);
+        }
+        console.log(response);
+    })
+}
+
+function onClientReady() {
+    //saveEmployee();
+    getEmployeeByBadgeNumber();
 }
