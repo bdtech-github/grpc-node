@@ -26,40 +26,74 @@ client.waitForReady(deadline, (err) => {
     onClientReady()
 })
 
-
-
 const saveEmployee = () => {
+    console.log('############### saveEmployee')
     const employee: Employee = {
-        firstName: 'Diego'
+        id: 1000,
+        firstName: 'Diego',
     }
-    console.log('sending')
-    client.save({ employee }, (err, response) => {
-        if(err) {
+    client.save({employee}, (err, response) => {
+        if (err) {
             console.error(err);
         }
-        console.log(response);
+        console.log(`Employee with id ${response?.employee?.id} saved`);
     })
 }
 
 const getEmployeeByBadgeNumber = () => {
-    client.getByBadgeNumber({ badgeNumber: 2080}, (err, response)=> {
-        if(err) {
+    console.log('############### getEmployeeByBadgeNumber')
+    client.getByBadgeNumber({badgeNumber: 2080}, (err, response) => {
+        if (err) {
             console.error(err);
         }
-        console.log(response);
+        console.log(`Employee with badge number ${response?.employee?.badgeNumber} has id ${response?.employee?.id}`);
     })
 }
 
 const getAllEmployees = () => {
+    console.log('############### getAllEmployees')
     const stream = client.getAll(new Empty());
     const employees: Employee[] = [];
     stream.on("data", (employee) => employees.push(employee));
-    stream.on("error", (err)=>console.log('error'));
-    stream.on("end", () => console.log(employees));
+    stream.on("error", (err) => console.log('error'));
+    stream.on("end", () => console.log(`${employees.length} employees saved`));
+}
+
+const saveAllEmployees = () => {
+    const employeesToSave = [{
+        id: 1,
+        badgeNumber: 2080,
+        firstName: "Grace",
+        lastName: "Decker",
+        vacationAccrualRate: 2,
+        vacationAccrued: 30,
+    },
+    {
+        id: 2,
+        badgeNumber: 7538,
+        firstName: "Amity",
+        lastName: "Fuller",
+        vacationAccrualRate: 2.3,
+        vacationAccrued: 23.4,
+    }];
+
+    const stream = client.saveAll();
+
+    const employees: Employee[] = [];
+    stream.on("data", (employee) => employees.push(employee));
+    stream.on("error", (err) => console.log('error'));
+    stream.on("end", () => console.log(`${employees.length} employees saved`));
+
+    employeesToSave.forEach((employee) => {
+        stream.write({employee});
+    });
+    stream.end();
 }
 
 function onClientReady() {
-    //saveEmployee();
+    saveEmployee();
     getEmployeeByBadgeNumber();
+    getAllEmployees();
+    saveAllEmployees();
     getAllEmployees();
 }

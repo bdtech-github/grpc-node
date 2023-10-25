@@ -49,7 +49,6 @@ const EmployeeService: EmployeeServiceHandlers = {
 
         if(request.employee) {
             const employee = request.employee;
-            console.log(`Saving employee with badge number ${employee.badgeNumber}`)
             _employeesDB.saveEmployee(employee);
             callback(null, { employee });
         }
@@ -62,6 +61,18 @@ const EmployeeService: EmployeeServiceHandlers = {
     },
 
     SaveAll(call: ServerDuplexStream<EmployeeRequest__Output, EmployeeResponse>): void {
+        call.on("data", (request:  EmployeeRequest) => {
+
+            if(request.employee) {
+                const employee = request.employee;
+                _employeesDB.saveEmployee(employee);
+                call.write({ employee });
+            }
+        });
+
+        call.on("end", () => {
+            call.end();
+        });
     },
 }
 
