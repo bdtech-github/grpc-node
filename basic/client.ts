@@ -4,6 +4,7 @@ import * as protoLoader from "@grpc/proto-loader";
 import * as grpc from "@grpc/grpc-js";
 import {ProtoGrpcType} from "./proto/employees";
 import {Employee} from "./proto/employees/Employee";
+import {Empty} from "google-protobuf/google/protobuf/empty_pb";
 
 const PORT = 8082
 const PROTO_FILE = './proto/employees.proto'
@@ -49,7 +50,16 @@ const getEmployeeByBadgeNumber = () => {
     })
 }
 
+const getAllEmployees = () => {
+    const stream = client.getAll(new Empty());
+    const employees: Employee[] = [];
+    stream.on("data", (employee) => employees.push(employee));
+    stream.on("error", (err)=>console.log('error'));
+    stream.on("end", () => console.log(employees));
+}
+
 function onClientReady() {
     //saveEmployee();
     getEmployeeByBadgeNumber();
+    getAllEmployees();
 }

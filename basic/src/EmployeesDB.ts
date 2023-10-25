@@ -47,4 +47,8 @@ export class EmployeesDB {
         this.employees.push(employee);
     }
 
+    public getAllEmployees(): Employee[] {
+        return this.employees;
+    }
+
 }

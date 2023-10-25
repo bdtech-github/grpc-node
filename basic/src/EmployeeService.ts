@@ -23,6 +23,11 @@ const EmployeeService: EmployeeServiceHandlers = {
     },
 
     GetAll(call: ServerWritableStream<GetAllRequest__Output, EmployeeResponse>): void {
+        const employees = _employeesDB.getAllEmployees();
+        employees.forEach(employee => {
+            call.write({ employee });
+        });
+        call.end();
     },
 
     GetByBadgeNumber(call: ServerUnaryCall<GetByBadgeNumberRequest__Output, EmployeeResponse>, callback: sendUnaryData<EmployeeResponse>): void {
