@@ -27,6 +27,16 @@ client.waitForReady(deadline, (err) => {
     onClientReady()
 })
 
+const getEmployeeByBadgeNumber = () => {
+    console.log('############### getEmployeeByBadgeNumber')
+    client.getByBadgeNumber({badgeNumber: 2080}, (err, response) => {
+        if (err) {
+            console.error(err);
+        }
+        console.log(`Employee with badge number ${response?.employee?.badgeNumber} has id ${response?.employee?.id}`);
+    })
+}
+
 const saveEmployee = () => {
     console.log('############### saveEmployee')
     const employee: Employee = {
@@ -42,16 +52,6 @@ const saveEmployee = () => {
     })
 }
 
-const getEmployeeByBadgeNumber = () => {
-    console.log('############### getEmployeeByBadgeNumber')
-    client.getByBadgeNumber({badgeNumber: 2080}, (err, response) => {
-        if (err) {
-            console.error(err);
-        }
-        console.log(`Employee with badge number ${response?.employee?.badgeNumber} has id ${response?.employee?.id}`);
-    })
-}
-
 const getAllEmployees = () => {
     console.log('############### getAllEmployees')
     const stream = client.getAll(new Empty());
@@ -64,6 +64,19 @@ const getAllEmployees = () => {
     });
     stream.on("error", (err) => console.log('error'));
     stream.on("end", () => console.log(`${employees.length} employees saved`));
+}
+
+const addPhotoEmployee = () => {
+    const stream = client.addPhoto(()=>{});
+    const fileStream = fs.createReadStream('./badgePhoto.png');
+
+    fileStream.on('data', (chunk) => {
+        stream.write({ data: chunk });
+    });
+
+    fileStream.on('end', () => {
+        stream.end();
+    });
 }
 
 const saveAllEmployees = () => {
@@ -100,24 +113,11 @@ const saveAllEmployees = () => {
     stream.end();
 }
 
-const savePhoto = () => {
-    const stream = client.addPhoto(()=>{});
-    const fileStream = fs.createReadStream('./badgePhoto.png');
-
-    fileStream.on('data', (chunk) => {
-        stream.write({ data: chunk });
-    });
-
-    fileStream.on('end', () => {
-        stream.end();
-    });
-}
-
 function onClientReady() {
     //saveEmployee();
     //getEmployeeByBadgeNumber();
     //getAllEmployees();
     //saveAllEmployees();
     //getAllEmployees();
-    savePhoto();
+    addPhotoEmployee();
 }
