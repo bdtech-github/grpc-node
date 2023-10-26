@@ -30,6 +30,7 @@ const saveEmployee = () => {
     console.log('############### saveEmployee')
     const employee: Employee = {
         id: 1000,
+        badgeNumber: 1080,
         firstName: 'Diego',
     }
     client.save({employee}, (err, response) => {
@@ -54,7 +55,12 @@ const getAllEmployees = () => {
     console.log('############### getAllEmployees')
     const stream = client.getAll(new Empty());
     const employees: Employee[] = [];
-    stream.on("data", (employee) => employees.push(employee));
+    stream.on("data", (response) => {
+        const employee = response.employee;
+        employees.push(employee);
+        console.log(`Fetched employee with badge number ${employee.badgeNumber}`);
+
+    });
     stream.on("error", (err) => console.log('error'));
     stream.on("end", () => console.log(`${employees.length} employees saved`));
 }
@@ -80,7 +86,10 @@ const saveAllEmployees = () => {
     const stream = client.saveAll();
 
     const employees: Employee[] = [];
-    stream.on("data", (employee) => employees.push(employee));
+    stream.on("data", (response) => {
+        employees.push(response.employee);
+        console.log(`Employee with badge number ${response.employee.badgeNumber} saved!`)
+    });
     stream.on("error", (err) => console.log('error'));
     stream.on("end", () => console.log(`${employees.length} employees saved`));
 
@@ -91,9 +100,9 @@ const saveAllEmployees = () => {
 }
 
 function onClientReady() {
-    saveEmployee();
-    getEmployeeByBadgeNumber();
-    getAllEmployees();
-    saveAllEmployees();
-    getAllEmployees();
+    //saveEmployee();
+    //getEmployeeByBadgeNumber();
+    //getAllEmployees();
+    //saveAllEmployees();
+    //getAllEmployees();
 }

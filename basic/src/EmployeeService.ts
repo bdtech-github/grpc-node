@@ -61,16 +61,18 @@ const EmployeeService: EmployeeServiceHandlers = {
     },
 
     SaveAll(call: ServerDuplexStream<EmployeeRequest__Output, EmployeeResponse>): void {
+        let count = 0;
         call.on("data", (request:  EmployeeRequest) => {
-
             if(request.employee) {
                 const employee = request.employee;
                 _employeesDB.saveEmployee(employee);
+                count++;
                 call.write({ employee });
             }
         });
 
         call.on("end", () => {
+            console.log(`${count} employees saved`)
             call.end();
         });
     },
