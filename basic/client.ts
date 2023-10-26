@@ -1,5 +1,6 @@
 // @ts-ignore
 import path from "path";
+import * as fs from 'fs';
 import * as protoLoader from "@grpc/proto-loader";
 import * as grpc from "@grpc/grpc-js";
 import {ProtoGrpcType} from "./proto/employees";
@@ -99,10 +100,24 @@ const saveAllEmployees = () => {
     stream.end();
 }
 
+const savePhoto = () => {
+    const stream = client.addPhoto(()=>{});
+    const fileStream = fs.createReadStream('./badgePhoto.png');
+
+    fileStream.on('data', (chunk) => {
+        stream.write({ data: chunk });
+    });
+
+    fileStream.on('end', () => {
+        stream.end();
+    });
+}
+
 function onClientReady() {
     //saveEmployee();
     //getEmployeeByBadgeNumber();
     //getAllEmployees();
     //saveAllEmployees();
     //getAllEmployees();
+    savePhoto();
 }

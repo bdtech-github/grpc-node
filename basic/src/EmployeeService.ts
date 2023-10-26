@@ -7,28 +7,18 @@ import {
     ServerWritableStream,
     UntypedHandleCall
 } from "@grpc/grpc-js";
-import {AddPhotoRequest__Output} from "../proto/employees/AddPhotoRequest";
+import {AddPhotoRequest, AddPhotoRequest__Output} from "../proto/employees/AddPhotoRequest";
 import {AddPhotoResponse} from "../proto/employees/AddPhotoResponse";
 import {GetAllRequest__Output} from "../proto/employees/GetAllRequest";
 import {EmployeeRequest, EmployeeRequest__Output} from "../proto/employees/EmployeeRequest";
 import {EmployeeResponse} from "../proto/employees/EmployeeResponse";
 import {GetByBadgeNumberRequest, GetByBadgeNumberRequest__Output} from "../proto/employees/GetByBadgeNumberRequest";
 import {EmployeesDB} from "./EmployeesDB";
+import * as fs from 'fs';
 
 const _employeesDB = new EmployeesDB();
 
 const EmployeeService: EmployeeServiceHandlers = {
-
-    AddPhoto(call: ServerReadableStream<AddPhotoRequest__Output, AddPhotoResponse>, callback: sendUnaryData<AddPhotoResponse>): void {
-    },
-
-    GetAll(call: ServerWritableStream<GetAllRequest__Output, EmployeeResponse>): void {
-        const employees = _employeesDB.getAllEmployees();
-        employees.forEach(employee => {
-            call.write({ employee });
-        });
-        call.end();
-    },
 
     GetByBadgeNumber(call: ServerUnaryCall<GetByBadgeNumberRequest__Output, EmployeeResponse>, callback: sendUnaryData<EmployeeResponse>): void {
         const request = call.request as GetByBadgeNumberRequest;
@@ -58,6 +48,27 @@ const EmployeeService: EmployeeServiceHandlers = {
             message: "Invalid input",
         }, null);
 
+    },
+
+    GetAll(call: ServerWritableStream<GetAllRequest__Output, EmployeeResponse>): void {
+        const employees = _employeesDB.getAllEmployees();
+        employees.forEach(employee => {
+            call.write({ employee });
+        });
+        call.end();
+    },
+
+    AddPhoto(call: ServerReadableStream<AddPhotoRequest__Output, AddPhotoResponse>, callback: sendUnaryData<AddPhotoResponse>): void {
+        const writableStream = fs.createWriteStream('uploaded_photo.png');
+
+        call.on('data', (request: AddPhotoRequest) => {
+            writableStream.write(request.data);
+        });
+
+        call.on('end', () => {
+            writableStream.end();
+            console.log('File uploaded successfully!');
+        });
     },
 
     SaveAll(call: ServerDuplexStream<EmployeeRequest__Output, EmployeeResponse>): void {
