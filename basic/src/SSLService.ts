@@ -1,6 +1,7 @@
+// @ts-ignore
+import path from 'path'
 import {ChannelCredentials, ServerCredentials} from "@grpc/grpc-js";
 import * as fs from "fs";
-import path from 'path'
 
 export class SSLService {
     static getServerCredentials(): ServerCredentials {
