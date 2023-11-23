@@ -6,6 +6,7 @@ import * as grpc from "@grpc/grpc-js";
 import {ProtoGrpcType} from "./proto/employees";
 import {Employee} from "./proto/employees/Employee";
 import {Empty} from "google-protobuf/google/protobuf/empty_pb";
+import {SSLService} from "./src/SSLService";
 
 const PORT = 8082
 const PROTO_FILE = './proto/employees.proto'
@@ -13,8 +14,9 @@ const PROTO_FILE = './proto/employees.proto'
 const packageDef = protoLoader.loadSync(path.resolve(__dirname, PROTO_FILE))
 const grpcObj = (grpc.loadPackageDefinition(packageDef) as unknown) as ProtoGrpcType
 
+const channelCredentials = SSLService.getChannelCredentials();
 const client = new grpcObj.employees.IEmployeeService(
-    `0.0.0.0:${PORT}`, grpc.credentials.createInsecure()
+    `0.0.0.0:${PORT}`, channelCredentials
 )
 
 const deadline = new Date()
@@ -115,9 +117,9 @@ const saveAllEmployees = () => {
 
 function onClientReady() {
     //saveEmployee();
-    //getEmployeeByBadgeNumber();
+    getEmployeeByBadgeNumber();
     //getAllEmployees();
     //saveAllEmployees();
     //getAllEmployees();
-    addPhotoEmployee();
+    //addPhotoEmployee();
 }

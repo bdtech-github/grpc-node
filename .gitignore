@@ -1,2 +1,19 @@
 node_modules
+
+## Protobuf
+*.pb.go
+
+## SSL
+*.crt
+*.key
+*.csr
+*.pem
+
+## Mac
+.DS_Store
+
+## Other
+bin
+.vscode
 .idea
+TODO.md
