@@ -8,6 +8,7 @@ node_modules
 *.key
 *.csr
 *.pem
+*.srl
 
 ## Mac
 .DS_Store
