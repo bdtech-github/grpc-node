@@ -116,10 +116,10 @@ const saveAllEmployees = () => {
 }
 
 function onClientReady() {
-    //saveEmployee();
+    saveEmployee();
     getEmployeeByBadgeNumber();
-    //getAllEmployees();
-    //saveAllEmployees();
-    //getAllEmployees();
-    //addPhotoEmployee();
+    getAllEmployees();
+    saveAllEmployees();
+    getAllEmployees();
+    addPhotoEmployee();
 }

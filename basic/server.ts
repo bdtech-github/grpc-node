@@ -15,6 +15,7 @@ const grpcObj = (grpc.loadPackageDefinition(packageDef) as unknown) as ProtoGrpc
 function main() {
     const server = getServer();
     const serverCredentials = SSLService.getServerCredentials();
+    //const serverCredentials = grpc.ServerCredentials.createInsecure();
 
     server.bindAsync(`0.0.0.0:${PORT}`, serverCredentials,
         (err, port) => {

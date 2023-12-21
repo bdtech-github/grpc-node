@@ -15,7 +15,7 @@
   },
   "scripts": {
     "proto:gen": "sh scripts/proto-gen.sh",
-    "ssl:gen": "cd ../ssl && sh ssl.sh",
+    "ssl:gen": "cd ../ssl && chmod +x ssl.sh && sh ssl.sh",
     "start:server": "ts-node server.ts",
     "start:client": "ts-node client.ts"
   }
