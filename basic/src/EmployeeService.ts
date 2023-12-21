@@ -51,41 +51,15 @@ const EmployeeService: EmployeeServiceHandlers = {
     },
 
     GetAll(call: ServerWritableStream<GetAllRequest__Output, EmployeeResponse>): void {
-        const employees = _employeesDB.getAllEmployees();
-        employees.forEach(employee => {
-            call.write({ employee });
-        });
-        call.end();
+       
     },
 
     AddPhoto(call: ServerReadableStream<AddPhotoRequest__Output, AddPhotoResponse>, callback: sendUnaryData<AddPhotoResponse>): void {
-        const writableStream = fs.createWriteStream('uploaded_photo.png');
-
-        call.on('data', (request: AddPhotoRequest) => {
-            writableStream.write(request.data);
-        });
-
-        call.on('end', () => {
-            writableStream.end();
-            console.log('File uploaded successfully!');
-        });
+      
     },
 
     SaveAll(call: ServerDuplexStream<EmployeeRequest__Output, EmployeeResponse>): void {
-        let count = 0;
-        call.on("data", (request:  EmployeeRequest) => {
-            if(request.employee) {
-                const employee = request.employee;
-                _employeesDB.saveEmployee(employee);
-                count++;
-                call.write({ employee });
-            }
-        });
-
-        call.on("end", () => {
-            console.log(`${count} employees saved`)
-            call.end();
-        });
+     
     },
 }
 
