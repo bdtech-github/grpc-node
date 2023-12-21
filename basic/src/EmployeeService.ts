@@ -59,7 +59,16 @@ const EmployeeService: EmployeeServiceHandlers = {
     },
 
     AddPhoto(call: ServerReadableStream<AddPhotoRequest__Output, AddPhotoResponse>, callback: sendUnaryData<AddPhotoResponse>): void {
-      
+        const writableStream = fs.createWriteStream('uploaded_photo.png');
+
+        call.on('data', (request: AddPhotoRequest) => {
+            writableStream.write(request.data);
+        });
+
+        call.on('end', () => {
+            writableStream.end();
+            console.log('File uploaded successfully!');
+        });
     },
 
     SaveAll(call: ServerDuplexStream<EmployeeRequest__Output, EmployeeResponse>): void {
