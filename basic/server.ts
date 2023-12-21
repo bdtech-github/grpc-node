@@ -4,7 +4,6 @@ import * as grpc from '@grpc/grpc-js'
 import * as protoLoader from '@grpc/proto-loader'
 import {ProtoGrpcType} from './proto/employees'
 import {EmployeeService} from "./src/EmployeeService";
-import {SSLService} from "./src/SSLService";
 
 const PORT = 8082
 const PROTO_FILE = './proto/employees.proto'
@@ -14,8 +13,7 @@ const grpcObj = (grpc.loadPackageDefinition(packageDef) as unknown) as ProtoGrpc
 
 function main() {
     const server = getServer();
-    const serverCredentials = SSLService.getServerCredentials();
-    //const serverCredentials = grpc.ServerCredentials.createInsecure();
+    const serverCredentials = grpc.ServerCredentials.createInsecure();
 
     server.bindAsync(`0.0.0.0:${PORT}`, serverCredentials,
         (err, port) => {
