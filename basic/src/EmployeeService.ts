@@ -51,7 +51,11 @@ const EmployeeService: EmployeeServiceHandlers = {
     },
 
     GetAll(call: ServerWritableStream<GetAllRequest__Output, EmployeeResponse>): void {
-       
+        const employees = _employeesDB.getAllEmployees();
+        employees.forEach(employee => {
+            call.write({ employee });
+        });
+        call.end();
     },
 
     AddPhoto(call: ServerReadableStream<AddPhotoRequest__Output, AddPhotoResponse>, callback: sendUnaryData<AddPhotoResponse>): void {
