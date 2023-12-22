@@ -22,15 +22,4 @@ export class SSLService {
         return serverCredentials;
     }
 
-    static getChannelCredentials(): ChannelCredentials {
-        const rootCert = fs.readFileSync(path.resolve(__dirname, '../../ssl/ca-cert.pem'));
-
-        // If you use CA root certificate
-        // const channelCredentials = ChannelCredentials.createSsl();
-
-        // If you use Self-Signed root certificate you need to provide it
-        const channelCredentials = ChannelCredentials.createSsl(rootCert);
-
-        return channelCredentials;
-    }
 }
