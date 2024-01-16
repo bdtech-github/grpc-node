@@ -15,6 +15,7 @@ const packageDef = protoLoader.loadSync(path.resolve(__dirname, PROTO_FILE))
 const grpcObj = (grpc.loadPackageDefinition(packageDef) as unknown) as ProtoGrpcType
 
 const channelCredentials = SSLService.getChannelCredentials();
+//const channelCredentials = grpc.credentials.createInsecure();
 const client = new grpcObj.employees.IEmployeeService(
     `0.0.0.0:${PORT}`, channelCredentials
 )
@@ -117,9 +118,9 @@ const saveAllEmployees = () => {
 
 function onClientReady() {
     saveEmployee();
-    getEmployeeByBadgeNumber();
-    getAllEmployees();
-    saveAllEmployees();
-    getAllEmployees();
-    addPhotoEmployee();
+    //getEmployeeByBadgeNumber();
+    //getAllEmployees();
+    //saveAllEmployees();
+    //getAllEmployees();
+    //addPhotoEmployee();
 }

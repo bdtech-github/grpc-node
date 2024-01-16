@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package DriveYourCity;
+
+message Bike {
+    int32   id = 1;
+    Dock    dock = 2;
+}
+
+message Dock {
+    int32 id = 1;
+    repeated Bike bikes = 2;
+  }
