@@ -7,17 +7,23 @@ export class InMemoryDockPersistence implements IDockPersistence {
     constructor () {
         this._docks = [];
     }
-    createDock(dock: Dock): Dock {
-        this._docks.push(dock);
-        return dock;    
+    createDock(dock: Dock): Promise<Dock> {
+        return new Promise((resolve, reject) => {
+            this._docks.push(dock);
+            resolve(dock);
+        });   
     }
 
-    getAllDocks(): Dock[] {
-        return this._docks;
+    getAllDocks(): Promise<Dock[]> {
+        return new Promise((resolve, reject) => {
+            resolve(this._docks);
+        });
     }
 
-    getDockById(id: number): Dock | undefined {
-        return this._docks.find(d => d.id === id);
+    getDockById(id: number): Promise<Dock | undefined> {
+        return new Promise((resolve, reject) => {            
+            resolve(this._docks.find(d => d.id === id));
+        });        
     }
     
 }
