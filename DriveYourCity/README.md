@@ -3,4 +3,4 @@
 ## Setup
 
 * Run `docker compose up`
-* Run `chmod +x ./dynamodb/init-scripts/create-table.sh` to grant execution permission to the script.
+* Run `docker compose exec cockroach_1 ./cockroach init --insecure --host=cockroach_1` to start one CockroachDB node.

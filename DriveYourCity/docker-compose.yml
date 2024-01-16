@@ -1,24 +1,20 @@
-version: '3'
+version: '3.9'
 
 services:
-  localstack:
-    image: localstack/localstack
+  cockroach_1:
+    image: cockroachdb/cockroach:latest
     ports:
-      - "4566:4566"
-    environment:
-      - SERVICES=dynamodb
-      - DEBUG=1
-      - DATA_DIR=/tmp/localstack/data
-      - PORT_WEB_UI=8080
+      - "8080:8080"
+    command:
+      - start
+      - --insecure
+      - --join=cockroach_1,cockroach_2
 
-  dynamodb-setup:
-    image: localstack/localstack
-    environment:
-      - AWS_DEFAULT_REGION=us-east-1
-      - AWS_ACCESS_KEY_ID=test
-      - AWS_SECRET_ACCESS_KEY=test
-    volumes:
-      - ./dynamodb/init-scripts:/docker-entrypoint-initaws.d
-
-volumes:
-  dynamodb-data:
+  cockroach_2:
+    image: cockroachdb/cockroach:latest
+    ports:
+      - "8081:8080"
+    command:
+      - start
+      - --insecure
+      - --join=cockroach_1,cockroach_2
