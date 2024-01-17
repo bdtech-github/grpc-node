@@ -9,6 +9,7 @@ generator client {
 
 model Dock {
   id        Int      @id 
+  maxBikes  Int      @default(5)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   bikes Bike[]
