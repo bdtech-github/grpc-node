@@ -16,6 +16,8 @@ export interface ProtoGrpcType {
     GetAllDocks: MessageTypeDefinition
     GetDockByIdRequest: MessageTypeDefinition
     IDockService: SubtypeConstructor<typeof grpc.Client, _DriveYourCity_IDockServiceClient> & { service: _DriveYourCity_IDockServiceDefinition }
+    IsDockAvailableRequest: MessageTypeDefinition
+    IsDockAvailableResponse: MessageTypeDefinition
   }
 }
 

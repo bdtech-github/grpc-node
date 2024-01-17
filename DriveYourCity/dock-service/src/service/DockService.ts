@@ -7,13 +7,15 @@ import { InMemoryDockPersistence } from "../persitence/InMemoryDockPersistence";
 import { Status } from "@grpc/grpc-js/build/src/constants";
 import { CreateDockRequest, CreateDockRequest__Output } from "../proto/DriveYourCity/CreateDockRequest";
 import { CockroachDBDockPersistence } from "../persitence/CockroachDBDockPersistence";
+import { IsDockAvailableRequest__Output } from "../proto/DriveYourCity/IsDockAvailableRequest";
+import { IsDockAvailableResponse } from "../proto/DriveYourCity/IsDockAvailableResponse";
 
 const dockPersistence = new CockroachDBDockPersistence();
 //const dockPersistence = new InMemoryDockPersistence();
 const DockService: IDockServiceHandlers = {
     CreateDock: async (call: ServerUnaryCall<CreateDockRequest__Output, DockResponse>, callback: sendUnaryData<DockResponse>): Promise<void> => {
         const request = call.request as CreateDockRequest;
-        if(request.dock) {
+        if (request.dock) {
             const dock = request.dock;
             const newDock = await dockPersistence.createDock(dock);
             callback(null, { dock: newDock });
@@ -36,6 +38,9 @@ const DockService: IDockServiceHandlers = {
             name: "dockId missing",
             message: "Invalid input"
         }, { dock: undefined });
+    },
+    IsDockAvailable: function (call: ServerUnaryCall<IsDockAvailableRequest__Output, IsDockAvailableResponse>, callback: sendUnaryData<IsDockAvailableResponse>): void {
+        throw new Error("Function not implemented.");
     }
 }
 
