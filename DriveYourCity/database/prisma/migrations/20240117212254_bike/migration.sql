@@ -1,7 +1,7 @@
 -- CreateTable
 CREATE TABLE "Bike" (
     "id" INT4 NOT NULL,
-    "dockId" INT4 NOT NULL,
+    "dockId" INT4,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 

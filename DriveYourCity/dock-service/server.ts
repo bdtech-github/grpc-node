@@ -30,7 +30,7 @@ function main() {
 function getServer() {
     const server = new grpc.Server();
 
-    server.addService(dockGrpcObj.DriveYourCity.IDockService.service, DockService)
+    server.addService(dockGrpcObj.DriveYourCity.IDockService.service, new DockService())
 
     return server
 }

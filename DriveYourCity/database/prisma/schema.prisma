@@ -13,12 +13,27 @@ model Dock {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   bikes Bike[]
+  originRides Ride[] @relation("originDock")
+  targetRides Ride[] @relation("targetDock")
 }
 
 model Bike {
-  id        Int      @id 
-  dockId    Int 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  dock      Dock   @relation(fields: [dockId], references: [id])
+  id        Int       @id 
+  dockId    Int?       
+  totalKm   Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  dock      Dock?     @relation(fields: [dockId], references: [id])
+}
+
+model Ride {
+  id            Int       @id 
+  km            Int      
+  bikeId        Int
+  originDockId  Int
+  targetDockId  Int?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  originDock    Dock      @relation("originDock", fields: [originDockId], references: [id])
+  targetDock    Dock?     @relation("targetDock", fields: [targetDockId], references: [id])
 }
