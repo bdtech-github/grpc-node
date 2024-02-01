@@ -5,8 +5,8 @@ services:
   roach-0:
     container_name: roach-0
     hostname: roach-0
-    image:  cockroachdb/cockroach-unstable:v23.2.0-beta.1
-    command: start  --insecure --join=roach-0,roach-1,roach-2 --listen-addr=roach-0:26257 --advertise-addr=roach-0:26257 --max-sql-memory=.25 --cache=.25
+    image:  cockroachdb/cockroach-unstable:v23.2.0-beta.1    
+    command: start --insecure --join=roach-0,roach-1,roach-2 --listen-addr=roach-0:26257 --advertise-addr=roach-0:26257 --max-sql-memory=.25 --cache=.25
     environment:
       - 'ALLOW_EMPTY_PASSWORD=yes'
 

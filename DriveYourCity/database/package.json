@@ -6,5 +6,8 @@
   "scripts": {
     "db:migrate": "npx prisma migrate dev --schema ./prisma/schema.prisma",
     "db:push": "npx prisma db push --schema ./prisma/schema.prisma"
+  },
+  "dependencies": {
+    "prisma": "^5.8.1"
   }
 }

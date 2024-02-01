@@ -22,7 +22,7 @@ class DockService implements IDockServiceHandlers {
                 callback(null, { dock: newDock });
             }
         } catch (err) {
-            callback(InternalError(err), { dock: undefined });
+            callback(InternalError(err as string), { dock: undefined });
         }        
     }
 
@@ -43,7 +43,7 @@ class DockService implements IDockServiceHandlers {
             }
             callback(InvalidArgumentError(['dockId']), { dock: undefined });
         } catch (err) {
-            callback(InternalError(err), { dock: undefined });
+            callback(InternalError(err as string), { dock: undefined });
         }        
     }
 
@@ -55,7 +55,7 @@ class DockService implements IDockServiceHandlers {
             }
             callback(InvalidArgumentError(['dockId']), { isAvalable: false });
         } catch (err) {
-            callback(InternalError(err), { isAvalable: false });
+            callback(InternalError(err as string), { isAvalable: false });
         }         
     }
 }

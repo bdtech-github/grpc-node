@@ -1,4 +1,4 @@
-import { ServerUnaryCall, sendUnaryData } from "@grpc/grpc-js";
+import { ServerUnaryCall, handleUnaryCall, sendUnaryData } from "@grpc/grpc-js";
 import { Status } from "@grpc/grpc-js/build/src/constants";
 import { IBikeServiceHandlers } from "../proto/DriveYourCity/IBikeService";
 import { BikeRequest__Output } from "../proto/DriveYourCity/BikeRequest";
@@ -8,16 +8,18 @@ import { AttachBikeToDockRequest__Output } from "../proto/DriveYourCity/AttachBi
 import { CockroachDBBikePersistence } from "../persitence/BikePersistence";
 import { dockClient } from "./DockClient";
 import { InternalError, InvalidArgumentError, NotFoundError } from "../utils/gRPC";
+import { UnAttachBikeFromDockRequest__Output } from "../proto/DriveYourCity/UnAttachBikeFromDockRequest";
 
 const bikePersistence = new CockroachDBBikePersistence();
 class BikeService implements IBikeServiceHandlers {
+
     [name: string]: import("@grpc/grpc-js").UntypedHandleCall;
     
     async AttachBikeToDock(call: ServerUnaryCall<AttachBikeToDockRequest__Output, BikeResponse>, callback: sendUnaryData<BikeResponse>): Promise<void> {
         try {
             const bikeId = call.request.bikeId;
             const dockId = call.request.dockId;
-            const totalKm = call.request.totalKms;
+            const totalKm = call.request.totalKms ? call.request.totalKms : 0;
     
             if(bikeId && dockId) {            
                 const isDockAvailable = await dockClient.isDockAvailable(dockId);
@@ -31,8 +33,12 @@ class BikeService implements IBikeServiceHandlers {
             } 
             callback(InvalidArgumentError(['dockId', 'bikeId']), { bike: undefined });
         } catch (err) {
-            callback(InternalError(err), { bike: undefined });
+            callback(InternalError(err as string), { bike: undefined });
         }        
+    }
+
+    async UnAttachBikeFromDock(call: ServerUnaryCall<UnAttachBikeFromDockRequest__Output, BikeResponse>, callback: sendUnaryData<BikeResponse>): Promise<void> {
+
     }
     
     async CreateBike(call: ServerUnaryCall<BikeRequest__Output, BikeResponse>, callback: sendUnaryData<BikeResponse>): Promise<void> {
@@ -43,7 +49,7 @@ class BikeService implements IBikeServiceHandlers {
                 callback(null, { bike: newBike });
             }
         } catch (err) {
-            callback(InternalError(err), { bike: undefined });
+            callback(InternalError(err as string), { bike: undefined });
         }         
     }
 
@@ -52,12 +58,13 @@ class BikeService implements IBikeServiceHandlers {
             const bikeId = call.request.bikeId;
             if (bikeId) {            
                 const bike = await bikePersistence.getBikeById(bikeId);
+                console.log(bike)
                 const error = bike ? null : NotFoundError('bike', bikeId);
                 callback(error, { bike });
             }
         callback(InvalidArgumentError(['dockId']), { bike: undefined });
         } catch (err) {
-            callback(InternalError(err), { bike: undefined });
+            callback(InternalError(err as string), { bike: undefined });
         }        
     }
 }

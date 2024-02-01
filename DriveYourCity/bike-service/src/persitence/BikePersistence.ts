@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client';
 import { prisma } from '../utils/prisma';
 import { Bike } from "../proto/DriveYourCity/Bike";
+import { Dock } from '../proto/DriveYourCity/Dock';
 
 export interface IBikePersistence {
     createBike(bike: Bike): Promise<Bike>;
@@ -28,17 +29,22 @@ export class CockroachDBBikePersistence implements IBikePersistence {
         return this._prisma.bike.findMany();        
     }
     async getBikeById(id: number): Promise<Bike | undefined> {
-        const bike = await this._prisma.bike.findUnique({
+        const bike = await this._prisma.bike.findFirst({
             where: {
               id,
             },
-          });
+            include: {
+                dock: true,
+            },
+          });        
         return bike as Bike;
     }
     async updateBike(id: number, bike: Partial<Bike>): Promise<Bike | undefined> {
+        const data: Prisma.BikeUpdateInput = bike as Prisma.BikeUpdateInput;
+        data.dock = { connect: { id: bike.dock?.id }};
         const updatedBike = await prisma.bike.update({
             where: { id },
-            data: bike
+            data
         });
         return updatedBike;
     }

@@ -20,9 +20,8 @@
     "express": "^4.18.2"
   },
   "scripts": {
-    "db:gen": " npx prisma generate --schema ./../database/prisma/schema.prisma",
-    "proto:gen": "sh scripts/proto-gen.sh",
-    "ssl:gen": "cd ../ssl && chmod +x ssl.sh && sh ssl.sh",
+    "db:gen": "sh scripts/prisma-gen.sh",
+    "proto:gen": "sh scripts/proto-gen.sh",    
     "start:server": "ts-node server.ts"
   }
 }

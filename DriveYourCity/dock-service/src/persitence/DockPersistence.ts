@@ -26,10 +26,13 @@ export class CockroachDBDockPersistence implements IDockPersistence {
         return this._prisma.dock.findMany();        
     }
     async getDockById(id: number): Promise<Dock | undefined> {
-        const dock = await this._prisma.dock.findUnique({
+        const dock = await this._prisma.dock.findFirst({
             where: {
               id,
             },
+            include: {
+                bikes: true,
+            }
           });
         return dock as Dock;
     }
