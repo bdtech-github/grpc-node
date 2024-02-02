@@ -23,12 +23,14 @@ class BikeService implements IBikeServiceHandlers {
     
             if(bikeId && dockId) {            
                 const isDockAvailable = await dockClient.isDockAvailable(dockId);
-                if(isDockAvailable) {                      
-                    const bike = await bikePersistence.getBikeById(bikeId);
-                    const updatedBike = await bikePersistence.updateBike(bikeId, { totalKm: bike?.totalKm! + totalKm!, dock: { id: dockId } });
-                    callback(null, { bike: updatedBike });
-                } else {
+                const bike = await bikePersistence.getBikeById(bikeId);
+                if(!isDockAvailable) {                                          
                     callback({ code: Status.FAILED_PRECONDITION, message: `dock with id ${dockId} not available` }, { bike: undefined });
+                } else if(bike?.dock !== null) {
+                    callback({ code: Status.FAILED_PRECONDITION, message: `bike with id ${bikeId} is attached to the dock ${bike?.dock?.id}` }, { bike: undefined });
+                }else {
+                    const updatedBike = await bikePersistence.updateBike(bikeId, { totalKm: bike?.totalKm! + totalKm!, dock: { id: dockId } });
+                    callback(null, { bike: updatedBike });                    
                 }
             } 
             callback(InvalidArgumentError(['dockId', 'bikeId']), { bike: undefined });
@@ -38,7 +40,22 @@ class BikeService implements IBikeServiceHandlers {
     }
 
     async UnAttachBikeFromDock(call: ServerUnaryCall<UnAttachBikeFromDockRequest__Output, BikeResponse>, callback: sendUnaryData<BikeResponse>): Promise<void> {
+        try {
+            const bikeId = call.request.bikeId;
 
+            if(bikeId) {
+                const bike = await bikePersistence.getBikeById(bikeId);
+                if(bike?.dock !== null) {
+                    const updatedBike = await bikePersistence.updateBike(bikeId, { dock: null });
+                    callback(null, { bike: updatedBike });
+                } else {
+                    callback({ code: Status.FAILED_PRECONDITION, message: `bike with id ${bikeId} is not attached to any dock` }, { bike: undefined });
+                }
+            }            
+
+        } catch (err) {
+            callback(InternalError(err as string), { bike: undefined });
+        }         
     }
     
     async CreateBike(call: ServerUnaryCall<BikeRequest__Output, BikeResponse>, callback: sendUnaryData<BikeResponse>): Promise<void> {
@@ -57,8 +74,7 @@ class BikeService implements IBikeServiceHandlers {
         try {
             const bikeId = call.request.bikeId;
             if (bikeId) {            
-                const bike = await bikePersistence.getBikeById(bikeId);
-                console.log(bike)
+                const bike = await bikePersistence.getBikeById(bikeId);                
                 const error = bike ? null : NotFoundError('bike', bikeId);
                 callback(error, { bike });
             }

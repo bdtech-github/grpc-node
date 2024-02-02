@@ -18,22 +18,22 @@ class RideService implements IRideServiceHandlers {
 
     async StartRide(call: ServerUnaryCall<StartRideRequest__Output, RideResponse>, callback: sendUnaryData<RideResponse>): Promise<void> {
         try {
-            const bikeId = call.request.bikeId;
+            
+            const bikeId = call.request.bikeId;            
             if(bikeId) {
-                let bike = await bikeClient.getBikeById(bikeId);
-                if(bike.dock) {
-                    const ride: Ride = {
-                        originDock: bike.dock
-                    }
-                    await ridePersistence.createRide(ride);
-                    await bikeClient.unAttachBikeFromDock(bikeId);                
-                } else {
-                    throw new Error(`bike with id ${bikeId} is not attached to a dock`);
-                }
+                let bike = await bikeClient.getBikeById(bikeId);                     
+                const ride: Ride = {          
+                    bike,          
+                    originDock: bike.dock
+                }                 
+                await bikeClient.unAttachBikeFromDock(bikeId);
+                const newRide = await ridePersistence.createRide(ride);                                              
+                callback(null, { ride: newRide });
             }
             callback(InvalidArgumentError(['bikeId']), { ride: undefined });
         } catch (err) {
-            callback(InternalError(err), { ride: undefined });
+            console.log(err)
+            callback(InternalError(err as string), { ride: undefined });
         }
     }
 
@@ -84,7 +84,7 @@ class RideService implements IRideServiceHandlers {
                 }
             }
         } catch (err) {
-            //callback(InternalError(err), { ride: undefined });
+            //callback(InternalError(err as string), { ride: undefined });
         }        
     }
 }

@@ -8,6 +8,7 @@
     "db:push": "npx prisma db push --schema ./prisma/schema.prisma"
   },
   "dependencies": {
+    "@prisma/client": "5.8.1",
     "prisma": "^5.8.1"
   }
 }

@@ -16,8 +16,18 @@ export class CockroachDBRidePersistence implements IRidePersistence {
     constructor() {
         this._prisma = prisma;
     }
-    createRide(ride: Ride): Promise<Ride> {
-        throw new Error('Method not implemented.');
+
+    async createRide(ride: Ride): Promise<Ride> {
+        
+        const input: Prisma.RideCreateInput = {            
+            km: 0,
+            bikeId: ride.bike!.id!,            
+            originDock: {
+                connect: { id: ride.originDock!.id! }
+            }
+        };       
+        return this._prisma.ride.create({ data: input });
+        
     }
     getAllRides(): Promise<Ride[]> {
         throw new Error('Method not implemented.');

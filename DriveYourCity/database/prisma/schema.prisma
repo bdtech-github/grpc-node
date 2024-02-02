@@ -27,7 +27,7 @@ model Bike {
 }
 
 model Ride {
-  id            Int       @id 
+  id            Int       @id @default(sequence())  
   km            Int      
   bikeId        Int
   originDockId  Int

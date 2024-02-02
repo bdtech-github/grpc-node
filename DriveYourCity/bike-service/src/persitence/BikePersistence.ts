@@ -41,7 +41,11 @@ export class CockroachDBBikePersistence implements IBikePersistence {
     }
     async updateBike(id: number, bike: Partial<Bike>): Promise<Bike | undefined> {
         const data: Prisma.BikeUpdateInput = bike as Prisma.BikeUpdateInput;
-        data.dock = { connect: { id: bike.dock?.id }};
+        if(bike.dock) {
+            data.dock = { connect: { id: bike.dock?.id }};
+        } else {
+            data.dock = { disconnect: true};
+        }                
         const updatedBike = await prisma.bike.update({
             where: { id },
             data

@@ -5,7 +5,7 @@ import * as protoLoader from '@grpc/proto-loader'
 import { ProtoGrpcType } from './src/proto/Ride';
 import { RideService } from './src/service/RideService';
 
-const PORT = 9082;
+const PORT = 9083;
 const RIDE_PROTO_FILE = './../proto/Ride.proto';
 
 const ridePackageDef = protoLoader.loadSync(path.resolve(__dirname, RIDE_PROTO_FILE));
