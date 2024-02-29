@@ -12,8 +12,7 @@ const dockPackageDef = protoLoader.loadSync(path.resolve(__dirname, DOCK_PROTO_F
 const dockGrpcObj = (grpc.loadPackageDefinition(dockPackageDef) as unknown) as ProtoGrpcType;
 
 function main() {
-    const server = getServer();
-    //const serverCredentials = SSLService.getServerCredentials();
+    const server = getServer();    
     const serverCredentials = grpc.ServerCredentials.createInsecure();
 
     server.bindAsync(`0.0.0.0:${PORT}`, serverCredentials,

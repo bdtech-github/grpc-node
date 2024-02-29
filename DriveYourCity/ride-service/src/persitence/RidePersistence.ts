@@ -21,7 +21,9 @@ export class CockroachDBRidePersistence implements IRidePersistence {
         
         const input: Prisma.RideCreateInput = {            
             km: 0,
-            bikeId: ride.bike!.id!,            
+            bike: {
+                connect: { id: ride.bike?.id! }
+            },             
             originDock: {
                 connect: { id: ride.originDock!.id! }
             }
@@ -32,11 +34,35 @@ export class CockroachDBRidePersistence implements IRidePersistence {
     getAllRides(): Promise<Ride[]> {
         throw new Error('Method not implemented.');
     }
-    getRideById(id: number): Promise<Ride | undefined> {
-        throw new Error('Method not implemented.');
+    async getRideById(id: number): Promise<Ride | undefined> {
+        const ride = await this._prisma.ride.findFirst({
+            where: {
+                id,
+            },
+            include: {
+                bike: true,
+                originDock: true,
+                targetDock: true,
+            }
+        });
+        return ride as Ride;
     }
-    updateRide(id: number, ride: Ride): Promise<Partial<Ride>> {
-        throw new Error('Method not implemented.');
+    async updateRide(id: number, ride: Ride): Promise<Ride | undefined> {
+        const data: Prisma.RideUpdateInput = ride as Prisma.RideUpdateInput;
+        data.targetDock = ride.targetDock ? { connect: { id: ride.targetDock.id }} : { disconnect: true };
+        
+        let updatedRide = await this._prisma.ride.update({
+            where: { id },
+            data,
+            include: {
+                bike: true,
+                originDock: true,
+                targetDock: true,
+            }
+        });
+    
+        
+        return updatedRide;
     }
 
 }

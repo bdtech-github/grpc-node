@@ -14,9 +14,10 @@ const dockPersistence = new CockroachDBDockPersistence();
 class DockService implements IDockServiceHandlers {
     [name: string]: import("@grpc/grpc-js").UntypedHandleCall;
 
-    async CreateDock (call: ServerUnaryCall<CreateDockRequest__Output, DockResponse>, callback: sendUnaryData<DockResponse>): Promise<void> {
+    async CreateDock (call: ServerUnaryCall<CreateDockRequest__Output, DockResponse>, callback: sendUnaryData<DockResponse>): Promise<void> {        
         try {
             const dock = call.request.dock;
+            console.log('CreateDock', { dock });
             if (dock) {                
                 const newDock = await dockPersistence.createDock(dock);
                 callback(null, { dock: newDock });
@@ -27,7 +28,7 @@ class DockService implements IDockServiceHandlers {
     }
 
     async GetAllDocks (call: ServerWritableStream<GetAllDocks__Output, DockResponse>): Promise<void> {
-        
+        console.log('GetAllDocks');
         const docks = await dockPersistence.getAllDocks();
         docks.forEach(dock => call.write({ dock }));
         call.end();     
@@ -36,6 +37,7 @@ class DockService implements IDockServiceHandlers {
     async GetDockById (call: ServerUnaryCall<GetDockByIdRequest__Output, DockResponse>, callback: sendUnaryData<DockResponse>): Promise<void> {
         try {
             const dockId = call.request.dockId;
+            console.log('GetDockById', { dockId });
             if (dockId) {            
                 const dock = await dockPersistence.getDockById(dockId);
                 const error = dock ? null : NotFoundError('dock', dockId);
@@ -50,6 +52,7 @@ class DockService implements IDockServiceHandlers {
     async IsDockAvailable(call: ServerUnaryCall<IsDockAvailableRequest__Output, IsDockAvailableResponse>, callback: sendUnaryData<IsDockAvailableResponse>): Promise<void> {
         try {
             const dockId = call.request.dockId;
+            console.log('IsDockAvailable', { dockId });
             if (dockId) {                        
                 callback(null, { isAvalable: await dockPersistence.isDockAvailable(dockId) });
             }

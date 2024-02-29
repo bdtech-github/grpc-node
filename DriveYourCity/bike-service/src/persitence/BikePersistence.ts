@@ -1,7 +1,6 @@
 import { Prisma } from '@prisma/client';
 import { prisma } from '../utils/prisma';
 import { Bike } from "../proto/DriveYourCity/Bike";
-import { Dock } from '../proto/DriveYourCity/Dock';
 
 export interface IBikePersistence {
     createBike(bike: Bike): Promise<Bike>;

@@ -36,9 +36,9 @@ const bikeClient = {
         }) 
     },
 
-    attachBikeToDock: async (bikeId: number, totalKms: number): Promise<Bike> => {
+    attachBikeToDock: async (bikeId: number, dockId: number, totalKms: number): Promise<Bike> => {
         return new Promise((resolve, reject) => {
-            bikeServiceClient.AttachBikeToDock({bikeId, totalKms}, (err, response) => {
+            bikeServiceClient.AttachBikeToDock({bikeId, dockId, totalKms}, (err, response) => {
                 if(response) {
                     resolve(response.bike as Bike);     
                 }

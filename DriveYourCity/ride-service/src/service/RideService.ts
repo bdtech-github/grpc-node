@@ -19,7 +19,8 @@ class RideService implements IRideServiceHandlers {
     async StartRide(call: ServerUnaryCall<StartRideRequest__Output, RideResponse>, callback: sendUnaryData<RideResponse>): Promise<void> {
         try {
             
-            const bikeId = call.request.bikeId;            
+            const bikeId = call.request.bikeId;   
+            console.log('StartRide', { bikeId });         
             if(bikeId) {
                 let bike = await bikeClient.getBikeById(bikeId);                     
                 const ride: Ride = {          
@@ -31,8 +32,7 @@ class RideService implements IRideServiceHandlers {
                 callback(null, { ride: newRide });
             }
             callback(InvalidArgumentError(['bikeId']), { ride: undefined });
-        } catch (err) {
-            console.log(err)
+        } catch (err) {            
             callback(InternalError(err as string), { ride: undefined });
         }
     }
@@ -42,6 +42,7 @@ class RideService implements IRideServiceHandlers {
             const newKms = request.newKms!;
             const rideId = request.rideId!;
 
+            console.log('UpdateRide', { rideId, newKms });
             const ride = await ridePersistence.getRideById(rideId);
             if (ride) {
                 const updatedRide = await ridePersistence.updateRide(rideId, { km: ride.km! + newKms });
@@ -59,32 +60,34 @@ class RideService implements IRideServiceHandlers {
     async EndRide(call: ServerWritableStream<EndRideRequest__Output, EndRideResponse>): Promise<void> {
         try {
             const rideId = call.request.rideId;
-            const dockId = call.request.dockId;
-    
-            if(rideId && dockId) {
-                const ride = await ridePersistence.getRideById(rideId);
-            
-                if(ride && ride.originDock) {
-                    const isDockAvailable = await dockClient.isDockAvailable(ride.originDock.id!);            
-                    if(isDockAvailable) {
-                        const updatedRide = await ridePersistence.updateRide(rideId, { targetDock: { id: dockId } });
-                        const updatedBike = await bikeClient.attachBikeToDock(ride.bike?.id!, ride.km!);
+            const targetDockId = call.request.dockId;
+            console.log('EndRide', { rideId, targetDockId });
+            if(rideId && targetDockId) {
+                const ride = await ridePersistence.getRideById(rideId);                                
+                if(ride && ride.originDock && ride.targetDock === null) {
+                    const isDockAvailable = await dockClient.isDockAvailable(targetDockId);            
+                    if(isDockAvailable) {                                           
+                        const updatedRide = await ridePersistence.updateRide(rideId, { targetDock: { id: targetDockId } });                                                                  
+                        const updatedBike = await bikeClient.attachBikeToDock(ride.bike?.id!, updatedRide?.targetDock?.id!, ride.km!);
 
                         const informData = [
-                            `ride with id: ${updatedRide.id} finished`,
-                            `origin dock = ${updatedRide.originDock?.id}`,
-                            `target dock = ${updatedRide.targetDock?.id}`,                            
-                            `Total Kms = ${updatedRide.km}`,
+                            `ride with id: ${updatedRide?.id} finished`,
+                            `origin dock = ${updatedRide?.originDock?.id}`,
+                            `target dock = ${updatedRide?.targetDock?.id}`,                            
+                            `Total Kms = ${updatedRide?.km}`,
                             `bike with id ${updatedBike.id} and new total Kms ${updatedBike?.totalKm}`,
                         ]
 
                         informData.forEach(info => call.write({info}));
+                        call.end();
                     } 
-                    throw new Error(`dock with id ${ride.originDock.id} is not available for handle more bikes.`)
+                    call.emit('error', new Error(`dock with id ${ride.originDock.id} is not available for handle more bikes.`));
+                } else {
+                    call.emit('error', new Error(`ride with id ${rideId} is not available to end.`));                    
                 }
             }
-        } catch (err) {
-            //callback(InternalError(err as string), { ride: undefined });
+        } catch (err) {            
+            call.emit('error', err);                                
         }        
     }
 }

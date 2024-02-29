@@ -21,6 +21,7 @@ class BikeService implements IBikeServiceHandlers {
             const dockId = call.request.dockId;
             const totalKm = call.request.totalKms ? call.request.totalKms : 0;
     
+            console.log('AttachBikeToDock', { bikeId, dockId, totalKm });
             if(bikeId && dockId) {            
                 const isDockAvailable = await dockClient.isDockAvailable(dockId);
                 const bike = await bikePersistence.getBikeById(bikeId);
@@ -43,6 +44,7 @@ class BikeService implements IBikeServiceHandlers {
         try {
             const bikeId = call.request.bikeId;
 
+            console.log('UnAttachBikeFromDock', { bikeId });
             if(bikeId) {
                 const bike = await bikePersistence.getBikeById(bikeId);
                 if(bike?.dock !== null) {
@@ -61,6 +63,7 @@ class BikeService implements IBikeServiceHandlers {
     async CreateBike(call: ServerUnaryCall<BikeRequest__Output, BikeResponse>, callback: sendUnaryData<BikeResponse>): Promise<void> {
         try {
             const bike = call.request.bike;
+            console.log('CreateBike', { bike });
             if(bike) {
                 const newBike = await bikePersistence.createBike(bike);
                 callback(null, { bike: newBike });
@@ -73,6 +76,7 @@ class BikeService implements IBikeServiceHandlers {
     async GetBikeById(call: ServerUnaryCall<GetBikeByIdRequest__Output, BikeResponse>, callback: sendUnaryData<BikeResponse>): Promise<void> {
         try {
             const bikeId = call.request.bikeId;
+            console.log('GetBikeById', { bikeId });
             if (bikeId) {            
                 const bike = await bikePersistence.getBikeById(bikeId);                
                 const error = bike ? null : NotFoundError('bike', bikeId);
